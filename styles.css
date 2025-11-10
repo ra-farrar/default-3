@@ -221,14 +221,14 @@ html[data-theme="auto"] *::-moz-selection{color:#FD3938}
   #subhead .subhead-box { flex-basis: 47%; justify-content: flex-end; gap: clamp(1px, 0.3vw, 3px); }
 }
 
-/* ===== Subhead arrow — larger + bolder theme-aware cursors (◒ / ◓) ===== */
+/* ===== Subhead arrow — unified ◓ cursor (color by theme) ===== */
 
-/* Dark (manual) → white ◒ cursor */
+/* Dark (manual) → white ◓ cursor */
 html[data-theme="dark"] #subhead .subhead-arrow:hover {
   cursor: url("data:image/svg+xml;utf8,\
 <svg xmlns='http://www.w3.org/2000/svg' width='48' height='48'>\
 <text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' \
-font-size='34' font-weight='700' fill='white'>◒</text></svg>") 24 24, auto;
+font-size='34' font-weight='700' fill='white'>◓</text></svg>") 24 24, auto;
 }
 
 /* Light (manual) → black ◓ cursor */
@@ -245,7 +245,7 @@ font-size='34' font-weight='700' fill='black'>◓</text></svg>") 24 24, auto;
     cursor: url("data:image/svg+xml;utf8,\
 <svg xmlns='http://www.w3.org/2000/svg' width='48' height='48'>\
 <text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' \
-font-size='34' font-weight='700' fill='white'>◒</text></svg>") 24 24, auto;
+font-size='34' font-weight='700' fill='white'>◓</text></svg>") 24 24, auto;
   }
 }
 @media (prefers-color-scheme: light) {
@@ -255,4 +255,10 @@ font-size='34' font-weight='700' fill='white'>◒</text></svg>") 24 24, auto;
 <text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' \
 font-size='34' font-weight='700' fill='black'>◓</text></svg>") 24 24, auto;
   }
+}
+
+/* Remove default browser focus outline from arrow (keep keyboard access) */
+#subhead .subhead-arrow:focus {
+  outline: none;
+  box-shadow: none;
 }
