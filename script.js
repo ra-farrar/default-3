@@ -30,7 +30,6 @@ function applyTheme(mode) {
 function getCurrentTheme() {
   const saved = localStorage.getItem(THEME_KEY);
   if (saved === 'light' || saved === 'dark') return saved;
-  // No saved preference -> use system
   return systemPrefersDark ? 'dark' : 'light';
 }
 
@@ -44,6 +43,9 @@ function toggleTheme() {
 if (toggle) {
   toggle.addEventListener('click', toggleTheme);
   // Initialize from saved or system
+  applyTheme(getCurrentTheme());
+} else {
+  // Initialize even if the header button isn't present
   applyTheme(getCurrentTheme());
 }
 
@@ -94,7 +96,6 @@ function mountExperienceDemo() {
   textEl.style.width = 'auto';
 
   function targetWidth() {
-    // We fit to .header-measure; CSS expands it to include the 3% side gutters
     return measureEl.clientWidth;
   }
 
@@ -102,7 +103,6 @@ function mountExperienceDemo() {
     const maxW = targetWidth();
     if (maxW <= 0) return;
 
-    // Binary search font-size
     textEl.style.fontSize = '50px';
     let low = 6, high = 2400;
     for (let i = 0; i < 22; i++) {
@@ -149,7 +149,7 @@ function mountExperienceDemo() {
     line.style.display = 'inline-block';
     line.style.whiteSpace = 'nowrap';
 
-    let low = 6, high = 320; // sensible bounds for subhead
+    let low = 6, high = 320; // safe bounds for subhead
     for (let i = 0; i < 18; i++) {
       const mid = (low + high) / 2;
       line.style.fontSize = mid + 'px';
@@ -162,12 +162,9 @@ function mountExperienceDemo() {
   function fitAll() {
     const maxW = box.clientWidth - paddingX(box);
     if (maxW <= 0) return;
-
-    // Fit each line independently so shorter text becomes larger
-    lines.forEach(line => fitLine(line, maxW));
+    lines.forEach(line => fitLine(line, maxW)); // independent fit → shorter line = bigger
   }
 
-  // React to box size changes and font loads
   if ('ResizeObserver' in window) {
     const ro = new ResizeObserver(fitAll);
     ro.observe(box);
@@ -192,4 +189,24 @@ function mountExperienceDemo() {
 document.addEventListener('DOMContentLoaded', () => {
   mountAnimationDemo();
   mountExperienceDemo();
+
+  // === Make the SUBHEAD ARROW act as the theme toggle (click/keyboard) ===
+  const arrow = document.querySelector('#subhead .subhead-arrow');
+  if (arrow) {
+    // A11y: make it operable like a button without changing markup
+    arrow.setAttribute('role', 'button');
+    arrow.setAttribute('tabindex', '0');
+    arrow.setAttribute('aria-label', 'Toggle theme (Light/Dark)');
+
+    // Click toggles theme
+    arrow.addEventListener('click', toggleTheme);
+
+    // Keyboard support: Enter/Space to toggle
+    arrow.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleTheme();
+      }
+    });
+  }
 });
